@@ -58,6 +58,30 @@
       update_cache: yes
     when: ansible_distribution == "CentOS"
 
+  - name: start httpd (CentOS)
+    tags: apache,centos
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+    when: ansible_dtstribution == "CentOS"
+
+  - name: change e-mail address for admin
+    tags: apache
+    lineinfile:
+       path: /etc/httpd/conf/httpd.conf
+       regexp: '^ServerAdmin'
+       line: ServerAdmin somebody@somewhere.net
+    when: ansible_distribution == "CentOS"
+    register: httpd
+
+  - name: restart httpd(CentOS)
+    tags: apache
+    service:
+       name: httpd
+       state: restarted
+    when: httpd.change    
+
   - name: copy default html file
     tags: apache
     copy:
