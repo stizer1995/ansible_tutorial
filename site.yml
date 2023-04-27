@@ -135,5 +135,5 @@
     package:
       name:
         - samba
-      state: latest
+      state: present
     when: ansible_distribution == "Ubuntu"      
