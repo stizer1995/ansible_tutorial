@@ -3,19 +3,40 @@
 - hosts: all
   become: true
   pre_tasks:
-  - name: install updates Centos
+  - name: updates repo Centos
     tags: always
     dnf:
-      update_only: yes
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "CentOS"
 
-  - name: instal updates (Ubuntu)
+  - name: updates repo (Ubuntu)
     tags: always
     apt:
-      upgrade: dist
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "Ubuntu"
+
+  - name: create simone user
+    tags: always
+    user:
+      name: simone
+      groups: root
+
+  - name: add ssh key for simone
+    tags: always
+    authorized_key:
+      user: simone
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIVjaBP25HDz/3gxg8SJmCKbvDQLSsru7ubseLeqO8K8 ansible"
+
+  - name: add sudoers file for simone
+    tags: always
+    copy:
+      src: sudoer_simone
+      dest: /etc/sudoers.d/simone
+      owner: root
+      group: root
+      mode:  0440
 
 
 - hosts: workstations
@@ -64,7 +85,7 @@
       name: httpd
       state: started
       enabled: yes
-    when: ansible_dtstribution == "CentOS"
+    when: ansible_distribution == "CentOS"
 
   - name: change e-mail address for admin
     tags: apache
@@ -80,7 +101,7 @@
     service:
        name: httpd
        state: restarted
-    when: httpd.change    
+    when: httpd.changed    
 
   - name: copy default html file
     tags: apache
