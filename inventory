@@ -1,2 +1,9 @@
+[web_servers]
+216.65.200.79 apache_package=apache2 php_package=libapache2-mod-php
+216.65.200.82 apache_package=apache2 php_package=libapache2-mod-php
+
+[db_servers]
 216.65.200.79
+
+[file_servers]
 216.65.200.82
